@@ -7,28 +7,28 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: A tab-based SPA designed for quick, task-oriented access. The structure prioritizes user action over the linear flow of the report. The main tabs are: 'Dashboard' for a weekly overview and today's focus, 'Workouts' for interactive details of routines A & B, 'Mobility & Grip' for warm-ups and finishers, and 'Nutrition & Principles' for reference. This modular, non-linear design allows a user to immediately find what they need (e.g., "What's my workout today?") without scrolling through philosophy, enhancing usability for a training context. -->
-    <!-- Visualization & Content Choices: The weekly schedule is an interactive HTML grid, not a static table, for better engagement. Workout details are in modals to prevent clutter. Key nutritional data (calories/protein) are presented as large "stat cards" for quick reference. A Donut chart from Chart.js visualizes the macronutrient split, providing an engaging data visualization. The progressive overload process is a CSS-based flowchart for clarity. This approach uses the best interactive method for each piece of information, confirming NO SVG/Mermaid. -->
+    <!-- Application Structure Plan: A tab-based SPA designed for quick, task-oriented access. The structure prioritizes user action over the linear flow of the report. The main tabs are: 'Dashboard' for a weekly overview, 'Workouts' for gym routines, 'Kettlebell Routine' for a home option, 'Mobility & Grip' for warm-ups, and 'Nutrition & Principles' for reference. This modular design enhances usability for a training context. -->
+    <!-- Visualization & Content Choices: The weekly schedule is an interactive HTML grid. Workout details are in modals. Nutritional data is on "stat cards" and a Donut chart (Chart.js). A CSS-based flowchart explains progressive overload. A new Kettlebell tab provides a circuit workout. A new cardio section was added to the principles tab for clear guidance. This approach uses the best interactive method for each piece of information, confirming NO SVG/Mermaid. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        .tab-content {
+       .tab-content {
             display: none;
         }
-        .tab-content.active {
+       .tab-content.active {
             display: block;
         }
-        .nav-link {
+       .nav-link {
             transition: all 0.3s ease;
         }
-        .nav-link.active {
+       .nav-link.active {
             border-bottom-color: #795548;
             color: #4E342E;
             font-weight: 600;
         }
-        .modal-backdrop {
+       .modal-backdrop {
             position: fixed;
             top: 0;
             left: 0;
@@ -38,7 +38,7 @@
             z-index: 40;
             display: none;
         }
-        .modal {
+       .modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -46,7 +46,7 @@
             z-index: 50;
             display: none;
         }
-        .chart-container {
+       .chart-container {
             position: relative;
             width: 100%;
             max-width: 400px;
@@ -56,7 +56,7 @@
             max-height: 400px;
         }
         @media (min-width: 768px) {
-            .chart-container {
+           .chart-container {
                 height: 350px;
             }
         }
@@ -71,9 +71,10 @@
             <p class="text-lg text-[#795548] mt-1">Your complete plan for strength, mobility, and nutrition.</p>
         </header>
 
-        <nav class="flex justify-center border-b-2 border-[#E0E0E0] mb-8">
+        <nav class="flex flex-wrap justify-center border-b-2 border-[#E0E0E0] mb-8">
             <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="dashboard">Dashboard</button>
             <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="workouts">Workouts</button>
+            <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="kettlebell">Kettlebell Routine</button>
             <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="mobility">Mobility & Grip</button>
             <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="nutrition">Nutrition & Principles</button>
         </nav>
@@ -94,6 +95,62 @@
                     <div id="workout-a" class="bg-white p-6 rounded-lg shadow-md"></div>
                     <div id="workout-b" class="bg-white p-6 rounded-lg shadow-md"></div>
                  </div>
+            </div>
+            
+            <div id="kettlebell" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4 text-center">The Grappler's At-Home Kettlebell Gauntlet</h2>
+                <p class="text-center text-[#795548] mb-6 max-w-3xl mx-auto">This is a one-off, full-body routine using a single 16kg kettlebell. It's perfect for days when you can't get to the gym. Perform it as a circuit, moving from one exercise to the next with minimal rest. After completing all exercises, rest for 90-120 seconds, then repeat for 3-4 total rounds.</p>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold mb-2">Warm-up (5 mins)</h3>
+                    <p class="text-[#795548] mb-4">Perform your daily mobility drills: Hip CARs, Thoracic Spine Twists, and Shoulder CARs.</p>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-[#F5F5F5]">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[#4E342E] uppercase tracking-wider">Exercise</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[#4E342E] uppercase tracking-wider">Reps</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-[#4E342E] uppercase tracking-wider">BJJ Carryover & Instructions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">1. Goblet Squat</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">10-15</td>
+                                    <td class="px-6 py-4">Builds powerful legs and a strong, upright core for base and guard recovery. Hold the kettlebell by the horns against your chest and squat deep.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">2. Kettlebell Swing</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">15-20</td>
+                                    <td class="px-6 py-4">Develops explosive hip-hinge power for bridging and takedowns. Propel the bell with your hips, not your arms.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">3. Single-Arm Row</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">8-12 per arm</td>
+                                    <td class="px-6 py-4">Builds pulling strength to control posture and finish submissions. Pull the kettlebell to your chest, squeezing your shoulder blade.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">4. Overhead Press</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">6-10 per arm</td>
+                                    <td class="px-6 py-4">Creates shoulder strength and stability for framing and stand-up. Press from the "rack" position to a full overhead lockout.</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap font-medium">5. Turkish Get-Up</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">2-3 per arm</td>
+                                    <td class="px-6 py-4">A total-body movement for core stability and strength under load, crucial for scrambling from the ground. Move slowly and deliberately.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                     <div class="mt-6">
+                        <h3 class="text-xl font-bold mb-2">Important Considerations</h3>
+                        <ul class="list-disc list-inside text-[#795548] space-y-1">
+                            <li><strong>Focus on Form:</strong> Perfect form is your priority. It's better to do fewer perfect reps than many sloppy ones.</li>
+                            <li><strong>Listen to Your Body:</strong> This is a demanding workout. Use it as an excellent alternative when you can't make it to the gym.</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div id="mobility" class="tab-content">
@@ -198,7 +255,11 @@
                     { title: 'Progressive Overload', content: `The "Double Progression" method is key. Work within the 5-8 rep range. Once you can hit 4 sets of 8 reps, increase the weight slightly. This ensures you're always challenging your body to adapt.` },
                     { title: 'Recovery & Deloads', content: 'Progress happens during recovery. Prioritize 7-9 hours of sleep. Every 4-6 weeks, take a deload week: reduce weights by 40-50% or cut sets in half to let your body fully repair.' },
                     { title: 'Autoregulation', content: 'Listen to your body. If you feel run down, scale back. It\'s better to take a light day than to risk injury or burnout. Consistency over time beats intensity on any single day.' }
-                ]
+                ],
+                 cardio: {
+                    title: 'Integrating Cardio',
+                    content: 'Cardio should support, not hinder, your recovery. Your BJJ training is already a significant cardio workout. Any additional cardio should be low-intensity to aid recovery and improve your aerobic base without adding excessive stress.'
+                }
             };
 
             const weeklyScheduleContainer = document.getElementById('weekly-schedule');
@@ -311,6 +372,20 @@
                     `;
                     list.appendChild(card);
                 });
+
+                const cardioCard = document.createElement('div');
+                cardioCard.className = 'p-4 bg-[#F5F5F5] rounded-lg';
+                cardioCard.innerHTML = `
+                    <h4 class="font-bold text-lg text-[#4E342E]">${data.cardio.title}</h4>
+                    <p class="text-[#795548] mt-1 mb-2">${data.cardio.content}</p>
+                    <ul class="list-disc list-inside text-[#795548] space-y-1">
+                        <li><strong>When:</strong> On your "Low" stress days (Tuesday, Thursday) or after a lifting session.</li>
+                        <li><strong>What:</strong> 20-30 minutes of Low-Intensity Steady-State (LISS) cardio. This means activities like incline walking, stationary biking, or light jogging where you can comfortably hold a conversation.</li>
+                        <li><strong>Why:</strong> LISS cardio enhances recovery and builds your aerobic base without interfering with the strength gains and recovery needed for your high-intensity BJJ and lifting days.</li>
+                    </ul>
+                `;
+                list.appendChild(cardioCard);
+
                 principlesContainer.appendChild(list);
             }
 
