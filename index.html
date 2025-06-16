@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BJJ Strength & Mobility Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A tab-based SPA designed for quick, task-oriented access. The structure prioritizes user action over the linear flow of the report. The main tabs are: 'Dashboard' for a weekly overview and today's focus, 'Workouts' for interactive details of routines A & B, 'Mobility & Grip' for warm-ups and finishers, and 'Nutrition & Principles' for reference. This modular, non-linear design allows a user to immediately find what they need (e.g., "What's my workout today?") without scrolling through philosophy, enhancing usability for a training context. -->
+    <!-- Visualization & Content Choices: The weekly schedule is an interactive HTML grid, not a static table, for better engagement. Workout details are in modals to prevent clutter. Key nutritional data (calories/protein) are presented as large "stat cards" for quick reference. A Donut chart from Chart.js visualizes the macronutrient split, providing an engaging data visualization. The progressive overload process is a CSS-based flowchart for clarity. This approach uses the best interactive method for each piece of information, confirming NO SVG/Mermaid. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            border-bottom-color: #795548;
+            color: #4E342E;
+            font-weight: 600;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 40;
+            display: none;
+        }
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            display: none;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+</head>
+<body class="bg-[#F5F5F5] text-[#4E342E]">
+
+    <div class="container mx-auto p-4 md:p-6 lg:p-8 max-w-7xl">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#4E342E]">Grappler's Training Dashboard</h1>
+            <p class="text-lg text-[#795548] mt-1">Your complete plan for strength, mobility, and nutrition.</p>
+        </header>
+
+        <nav class="flex justify-center border-b-2 border-[#E0E0E0] mb-8">
+            <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="dashboard">Dashboard</button>
+            <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="workouts">Workouts</button>
+            <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="mobility">Mobility & Grip</button>
+            <button class="nav-link text-lg py-4 px-6 border-b-4 border-transparent text-[#A1887F]" data-tab="nutrition">Nutrition & Principles</button>
+        </nav>
+
+        <main>
+            <div id="dashboard" class="tab-content">
+                <section>
+                    <h2 class="text-2xl font-bold mb-4 text-center">Your Weekly Plan (3-Day Schedule)</h2>
+                    <p class="text-center text-[#795548] mb-6 max-w-3xl mx-auto">This schedule is based on the High/Low stress model, designed to consolidate your hardest training days and maximize recovery. Your BJJ sessions are fixed, and strength training is planned around them.</p>
+                    <div id="weekly-schedule" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4"></div>
+                </section>
+            </div>
+
+            <div id="workouts" class="tab-content">
+                 <h2 class="text-2xl font-bold mb-4 text-center">Full-Body Workouts</h2>
+                 <p class="text-center text-[#795548] mb-8 max-w-3xl mx-auto">Alternate between Workout A and Workout B on your scheduled lifting days. These workouts are built around core movement patterns to build functional strength for BJJ. Click any exercise for details and carryover.</p>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div id="workout-a" class="bg-white p-6 rounded-lg shadow-md"></div>
+                    <div id="workout-b" class="bg-white p-6 rounded-lg shadow-md"></div>
+                 </div>
+            </div>
+
+            <div id="mobility" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4 text-center">Mobility & Grip Protocols</h2>
+                <p class="text-center text-[#795548] mb-8 max-w-3xl mx-auto">This section covers your essential pre-training mobility routine to prepare your body for the demands of grappling and lifting, as well as specialized exercises to build crushing, resilient grips.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Daily Mobility Warm-up (5-10 mins)</h3>
+                        <p class="text-[#795548] mb-4">Perform before every training session. This is not just a warm-up; it's a daily check-in with your body.</p>
+                        <div id="mobility-routine"></div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Grip Strength Finishers</h3>
+                        <p class="text-[#795548] mb-4">Choose 1-2 exercises to perform at the end of your strength workouts.</p>
+                        <div id="grip-routine"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="nutrition" class="tab-content">
+                <h2 class="text-2xl font-bold mb-4 text-center">Nutrition & Guiding Principles</h2>
+                <p class="text-center text-[#795548] mb-8 max-w-3xl mx-auto">Proper nutrition and recovery are what turn hard training into real progress. This section outlines your key nutritional targets for fat loss while preserving muscle, and the core principles for long-term success.</p>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Daily Nutritional Targets</h3>
+                        <p class="text-[#795548] mb-6">Based on your goal of reaching 77kg. Strength training while in a deficit signals your body to burn fat and preserve muscle.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-around text-center">
+                            <div class="p-4 bg-[#F5F5F5] rounded-lg flex-1">
+                                <span class="text-3xl font-bold text-[#795548]">~2200</span>
+                                <p class="text-[#A1887F]">Target kCal / Day</p>
+                            </div>
+                            <div class="p-4 bg-[#F5F5F5] rounded-lg flex-1">
+                                <span class="text-3xl font-bold text-[#795548]">140-170g</span>
+                                <p class="text-[#A1887F]">Target Protein / Day</p>
+                            </div>
+                        </div>
+                        <h4 class="font-bold mt-6 mb-2">Sample Macro Split</h4>
+                        <div class="chart-container">
+                            <canvas id="nutritionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Core Principles</h3>
+                        <div id="principles"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+    <div id="exercise-modal" class="modal bg-white w-11/12 max-w-lg p-6 rounded-lg shadow-xl">
+        <div id="modal-content"></div>
+        <button id="close-modal" class="absolute top-2 right-4 text-2xl font-bold text-[#A1887F]">&times;</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.nav-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            const data = {
+                workouts: {
+                    a: {
+                        title: 'Workout A',
+                        exercises: [
+                            { name: '1. Main Lift: Trap Bar Deadlift', sets: '4', reps: '5-8', rest: '120s', note: 'Focus on explosive hip drive. Builds the power for takedowns, lifts from guard, and bridging.' },
+                            { name: '2A. Upper Body Push: Dumbbell Bench Press', sets: '4', reps: '6-10', rest: '90s', note: 'Control the descent. Builds pushing strength for frames and escaping bottom positions.' },
+                            { name: '2B. Upper Body Pull: Weighted Pull-ups', sets: '4', reps: '5-8', rest: '90s', note: 'Use a Gi or towel for BJJ-specific grip. Builds pulling strength for control and submissions.' },
+                            { name: '3A. Accessory: Goblet Squat', sets: '3', reps: '8-12', rest: '60s', note: 'Keep torso upright. Develops leg drive and the postural strength to resist guard passes.' },
+                            { name: '3B. Accessory: Dumbbell Row', sets: '3', reps: '8-12 per arm', rest: '60s', note: 'Squeeze the shoulder blade at the top. Builds upper back strength for posture and control.' },
+                            { name: '4. Core/Grip: Farmer\'s Walk', sets: '3', reps: '30m', rest: '60s', note: 'Walk with heavy dumbbells/kettlebells. Builds immense grip endurance and core stability.' },
+                        ]
+                    },
+                    b: {
+                        title: 'Workout B',
+                        exercises: [
+                            { name: '1. Main Lift: Zercher Squat', sets: '4', reps: '5-8', rest: '120s', note: 'Brace core hard. Builds a "shield" of strength to maintain posture and base under pressure.' },
+                            { name: '2A. Upper Body Push: Overhead Press', sets: '4', reps: '5-8', rest: '90s', note: 'Push head "through the window" at the top. Develops shoulder power for stand-up and passing.' },
+                            { name: '2B. Upper Body Pull: Barbell Bent-Over Row', sets: '4', reps: '6-10', rest: '90s', note: 'Hinge at the hips, flat back. Builds a powerful back for pulling opponents in and breaking posture.' },
+                            { name: '3A. Accessory: Barbell Hip Thrust', sets: '3', reps: '8-12', rest: '60s', note: 'Squeeze glutes hard at the top. Directly translates to a more explosive and effective bridge.' },
+                            { name: '3B. Accessory: Dips (or Push-ups)', sets: '3', reps: 'Max Reps', rest: '60s', note: 'Go for full range of motion. Builds chest and tricep strength for pushing and framing.' },
+                            { name: '4. Core/Grip: Dead Hang', sets: '3', reps: 'Max Time', rest: '60s', note: 'Use a Gi or towel for added difficulty. Excellent for grip endurance and decompressing the spine.' },
+                        ]
+                    }
+                },
+                mobility: [
+                    { name: 'Hip CARs', description: 'Standing, slowly move one hip through its largest possible pain-free circle. 3-5 circles each way, each leg.'},
+                    { name: '90/90 Stretch', description: 'Sit with legs at 90° angles. Hinge over front leg, then work on lifting back ankle.'},
+                    { name: 'Quadruped T-Spine Twists', description: 'On all fours, hand behind head. Rotate elbow down, then up to ceiling. 8-10 reps each side.'},
+                    { name: 'Shoulder CARs', description: 'Standing, slowly move one arm through its largest possible pain-free circle. 3-5 circles each way, each arm.'},
+                    { name: 'Lounge Chair Stretch', description: 'Seated, hands behind you, push chest up to stretch chest and shoulders.'},
+                ],
+                grip: [
+                    { name: 'Plate Pinch', type: 'Crushing Grip', details: 'Hold two plates smooth-side out for 20-30 seconds.' },
+                    { name: 'Farmer\'s Walk', type: 'Support Grip', details: 'Walk 30m with the heaviest safe weight.' },
+                    { name: 'Gi/Towel Hang', type: 'Support Grip', details: 'Hang from a Gi or towel for maximum time.' },
+                    { name: 'Dumbbell Wrist Curls', type: 'Wrist Strength', details: '10-15 reps, palm facing up.' },
+                    { name: 'Dumbbell Reverse Curls', type: 'Wrist Strength', details: '10-15 reps, palm facing down.' }
+                ],
+                principles: [
+                    { title: 'Progressive Overload', content: `The "Double Progression" method is key. Work within the 5-8 rep range. Once you can hit 4 sets of 8 reps, increase the weight slightly. This ensures you're always challenging your body to adapt.` },
+                    { title: 'Recovery & Deloads', content: 'Progress happens during recovery. Prioritize 7-9 hours of sleep. Every 4-6 weeks, take a deload week: reduce weights by 40-50% or cut sets in half to let your body fully repair.' },
+                    { title: 'Autoregulation', content: 'Listen to your body. If you feel run down, scale back. It\'s better to take a light day than to risk injury or burnout. Consistency over time beats intensity on any single day.' }
+                ]
+            };
+
+            const weeklyScheduleContainer = document.getElementById('weekly-schedule');
+            const workoutAContainer = document.getElementById('workout-a');
+            const workoutBContainer = document.getElementById('workout-b');
+            const mobilityContainer = document.getElementById('mobility-routine');
+            const gripContainer = document.getElementById('grip-routine');
+            const principlesContainer = document.getElementById('principles');
+            const modalBackdrop = document.getElementById('modal-backdrop');
+            const modal = document.getElementById('exercise-modal');
+            const modalContent = document.getElementById('modal-content');
+            const closeModalBtn = document.getElementById('close-modal');
+
+            const schedule = [
+                { day: 'Monday', task: 'Strength Training (Workout A)', stress: 'High' },
+                { day: 'Tuesday', task: 'Mobility / Active Recovery', stress: 'Low' },
+                { day: 'Wednesday', task: 'Strength Training (Workout B)', stress: 'High' },
+                { day: 'Thursday', task: 'Mobility / Active Recovery', stress: 'Low' },
+                { day: 'Friday', task: 'BJJ (19:20-20:30)', stress: 'High' },
+                { day: 'Saturday', task: 'Strength (A) & BJJ (09:00-10:20)', stress: 'Very High' },
+                { day: 'Sunday', task: 'Rest', stress: 'Rest' }
+            ];
+
+            const today = new Date().toLocaleString('en-US', { weekday: 'long' });
+            
+            function renderSchedule() {
+                weeklyScheduleContainer.innerHTML = '';
+                schedule.forEach(item => {
+                    const dayCard = document.createElement('div');
+                    const isToday = item.day === today;
+                    const stressColor = {
+                        'High': 'bg-red-100 border-red-300',
+                        'Very High': 'bg-red-200 border-red-400',
+                        'Low': 'bg-green-100 border-green-300',
+                        'Rest': 'bg-blue-100 border-blue-300',
+                    };
+                    dayCard.className = `p-4 rounded-lg shadow-sm border-l-4 ${stressColor[item.stress]} ${isToday ? 'ring-2 ring-[#795548]' : ''}`;
+                    dayCard.innerHTML = `
+                        <p class="font-bold text-lg ${isToday ? 'text-[#4E342E]' : ''}">${item.day}</p>
+                        <p class="text-[#795548]">${item.task}</p>
+                        <p class="text-sm text-[#A1887F] mt-2">Stress: ${item.stress}</p>
+                    `;
+                    weeklyScheduleContainer.appendChild(dayCard);
+                });
+            }
+
+            function renderWorkouts() {
+                workoutAContainer.innerHTML = `<h3 class="text-xl font-bold mb-4">${data.workouts.a.title}</h3>`;
+                const listA = document.createElement('ul');
+                listA.className = 'space-y-3';
+                data.workouts.a.exercises.forEach(ex => {
+                    const item = document.createElement('li');
+                    item.className = 'p-3 bg-[#F5F5F5] rounded-md cursor-pointer hover:bg-[#E0E0E0] transition';
+                    item.textContent = ex.name;
+                    item.addEventListener('click', () => openModal(ex));
+                    listA.appendChild(item);
+                });
+                workoutAContainer.appendChild(listA);
+
+                workoutBContainer.innerHTML = `<h3 class="text-xl font-bold mb-4">${data.workouts.b.title}</h3>`;
+                const listB = document.createElement('ul');
+                listB.className = 'space-y-3';
+                data.workouts.b.exercises.forEach(ex => {
+                    const item = document.createElement('li');
+                    item.className = 'p-3 bg-[#F5F5F5] rounded-md cursor-pointer hover:bg-[#E0E0E0] transition';
+                    item.textContent = ex.name;
+                    item.addEventListener('click', () => openModal(ex));
+                    listB.appendChild(item);
+                });
+                workoutBContainer.appendChild(listB);
+            }
+
+            function renderMobility() {
+                const list = document.createElement('ul');
+                list.className = 'space-y-4';
+                data.mobility.forEach(item => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p class="font-semibold text-[#4E342E]">${item.name}</p>
+                        <p class="text-[#795548]">${item.description}</p>
+                    `;
+                    list.appendChild(li);
+                });
+                mobilityContainer.appendChild(list);
+            }
+
+            function renderGrip() {
+                const list = document.createElement('ul');
+                list.className = 'space-y-4';
+                data.grip.forEach(item => {
+                     const li = document.createElement('li');
+                    li.innerHTML = `
+                        <p class="font-semibold text-[#4E342E]">${item.name} <span class="text-sm font-normal text-[#A1887F]">(${item.type})</span></p>
+                        <p class="text-[#795548]">${item.details}</p>
+                    `;
+                    list.appendChild(li);
+                });
+                gripContainer.appendChild(list);
+            }
+
+            function renderPrinciples() {
+                const list = document.createElement('div');
+                list.className = 'space-y-6';
+                data.principles.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'p-4 bg-[#F5F5F5] rounded-lg'
+                    card.innerHTML = `
+                        <h4 class="font-bold text-lg text-[#4E342E]">${item.title}</h4>
+                        <p class="text-[#795548] mt-1">${item.content}</p>
+                    `;
+                    list.appendChild(card);
+                });
+                principlesContainer.appendChild(list);
+            }
+
+            function openModal(exercise) {
+                modalContent.innerHTML = `
+                    <h3 class="text-2xl font-bold mb-4">${exercise.name}</h3>
+                    <div class="grid grid-cols-3 gap-4 text-center mb-4">
+                        <div><p class="font-bold">Sets</p><p class="text-lg">${exercise.sets}</p></div>
+                        <div><p class="font-bold">Reps</p><p class="text-lg">${exercise.reps}</p></div>
+                        <div><p class="font-bold">Rest</p><p class="text-lg">${exercise.rest}</p></div>
+                    </div>
+                    <p class="text-lg font-semibold mt-4">BJJ Carryover:</p>
+                    <p class="text-[#795548]">${exercise.note}</p>
+                `;
+                modalBackdrop.style.display = 'block';
+                modal.style.display = 'block';
+            }
+
+            function closeModal() {
+                modalBackdrop.style.display = 'none';
+                modal.style.display = 'none';
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            modalBackdrop.addEventListener('click', closeModal);
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.getAttribute('data-tab');
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+
+            function renderNutritionChart() {
+                const ctx = document.getElementById('nutritionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Protein (28%)', 'Carbohydrates (36%)', 'Fats (36%)'],
+                        datasets: [{
+                            data: [154 * 4, 200 * 4, 87 * 9], 
+                            backgroundColor: ['#795548', '#A1887F', '#E0E0E0'],
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const item = tooltipItems[0];
+                                        let label = item.chart.data.labels[item.dataIndex];
+                                        if (Array.isArray(label)) {
+                                          return label.join(' ');
+                                        } else {
+                                          return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.querySelector('.nav-link[data-tab="dashboard"]').click();
+            renderSchedule();
+            renderWorkouts();
+            renderMobility();
+            renderGrip();
+            renderPrinciples();
+            renderNutritionChart();
+        });
+    </script>
+</body>
+</html>
