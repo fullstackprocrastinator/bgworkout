@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Warm Neutrals -->
-    <!-- Application Structure Plan: A tab-based SPA designed for quick, task-oriented access. The structure prioritizes user action over the linear flow of the report. The main tabs are: 'Dashboard' for a weekly overview, 'Workouts' for gym routines, 'Kettlebell Routine' for a home option, 'Mobility & Grip' for warm-ups, and 'Nutrition & Principles' for reference. This modular design enhances usability for a training context. -->
-    <!-- Visualization & Content Choices: The weekly schedule is an interactive HTML grid. Workout details are in modals. Nutritional data is on "stat cards" and a Donut chart (Chart.js). A CSS-based flowchart explains progressive overload. A new Kettlebell tab provides a circuit workout. A new cardio section was added to the principles tab for clear guidance. This approach uses the best interactive method for each piece of information, confirming NO SVG/Mermaid. -->
+    <!-- Application Structure Plan: A tab-based SPA designed for quick, task-oriented access. The structure prioritises user action over the linear flow of the report. The main tabs are: 'Dashboard' for a weekly overview, 'Workouts' for gym routines, 'Kettlebell Routine' for a home option, 'Mobility & Grip' for warm-ups, and 'Nutrition & Principles' for reference. This modular design enhances usability for a training context. -->
+    <!-- Visualisation & Content Choices: The weekly schedule is an interactive HTML grid. Workout details are in modals. Nutritional data is on "stat cards" and a Donut chart (Chart.js). A CSS-based flowchart explains progressive overload. A new Kettlebell tab provides a circuit workout. A new cardio section was added to the principles tab for clear guidance. This approach uses the best interactive method for each piece of information, confirming NO SVG/Mermaid. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -82,8 +82,8 @@
         <main>
             <div id="dashboard" class="tab-content">
                 <section>
-                    <h2 class="text-2xl font-bold mb-4 text-center">Your Weekly Plan (3-Day Schedule)</h2>
-                    <p class="text-center text-[#795548] mb-6 max-w-3xl mx-auto">This schedule is based on the High/Low stress model, designed to consolidate your hardest training days and maximize recovery. Your BJJ sessions are fixed, and strength training is planned around them.</p>
+                    <h2 class="text-2xl font-bold mb-4 text-center">Your Restructured Weekly Plan</h2>
+                    <p class="text-center text-[#795548] mb-6 max-w-3xl mx-auto">This schedule has been updated to incorporate your Monday HIIT class. It follows the High/Low stress model to manage recovery. Below is a demanding 3-day-per-week lifting schedule. For a less demanding option, consider the 2-day plan: drop the Sunday strength session and perform Workout B on Saturday.</p>
                     <div id="weekly-schedule" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4"></div>
                 </section>
             </div>
@@ -155,7 +155,7 @@
 
             <div id="mobility" class="tab-content">
                 <h2 class="text-2xl font-bold mb-4 text-center">Mobility & Grip Protocols</h2>
-                <p class="text-center text-[#795548] mb-8 max-w-3xl mx-auto">This section covers your essential pre-training mobility routine to prepare your body for the demands of grappling and lifting, as well as specialized exercises to build crushing, resilient grips.</p>
+                <p class="text-center text-[#795548] mb-8 max-w-3xl mx-auto">This section covers your essential pre-training mobility routine to prepare your body for the demands of grappling and lifting, as well as specialised exercises to build crushing, resilient grips.</p>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div class="bg-white p-6 rounded-lg shadow-md">
                         <h3 class="text-xl font-bold mb-4">Daily Mobility Warm-up (5-10 mins)</h3>
@@ -253,7 +253,7 @@
                 ],
                 principles: [
                     { title: 'Progressive Overload', content: `The "Double Progression" method is key. Work within the 5-8 rep range. Once you can hit 4 sets of 8 reps, increase the weight slightly. This ensures you're always challenging your body to adapt.` },
-                    { title: 'Recovery & Deloads', content: 'Progress happens during recovery. Prioritize 7-9 hours of sleep. Every 4-6 weeks, take a deload week: reduce weights by 40-50% or cut sets in half to let your body fully repair.' },
+                    { title: 'Recovery & Deloads', content: 'Progress happens during recovery. Prioritise 7-9 hours of sleep. Every 4-6 weeks, take a deload week: reduce weights by 40-50% or cut sets in half to let your body fully repair.' },
                     { title: 'Autoregulation', content: 'Listen to your body. If you feel run down, scale back. It\'s better to take a light day than to risk injury or burnout. Consistency over time beats intensity on any single day.' }
                 ],
                  cardio: {
@@ -274,29 +274,29 @@
             const closeModalBtn = document.getElementById('close-modal');
 
             const schedule = [
-                { day: 'Monday', task: 'Strength Training (Workout A)', stress: 'High' },
+                { day: 'Monday', task: 'HIIT Class', stress: 'High' },
                 { day: 'Tuesday', task: 'Mobility / Active Recovery', stress: 'Low' },
-                { day: 'Wednesday', task: 'Strength Training (Workout B)', stress: 'High' },
+                { day: 'Wednesday', task: 'Strength Training (Workout A)', stress: 'High' },
                 { day: 'Thursday', task: 'Mobility / Active Recovery', stress: 'Low' },
                 { day: 'Friday', task: 'BJJ (19:20-20:30)', stress: 'High' },
-                { day: 'Saturday', task: 'Strength (A) & BJJ (09:00-10:20)', stress: 'Very High' },
-                { day: 'Sunday', task: 'Rest', stress: 'Rest' }
+                { day: 'Saturday', task: 'Strength (B) & BJJ (09:00-10:20)', stress: 'Very High' },
+                { day: 'Sunday', task: 'Strength Training (Workout A)', stress: 'High' }
             ];
 
-            const today = new Date().toLocaleString('en-US', { weekday: 'long' });
+            const today = new Date().toLocaleString('en-GB', { weekday: 'long' });
             
             function renderSchedule() {
                 weeklyScheduleContainer.innerHTML = '';
                 schedule.forEach(item => {
                     const dayCard = document.createElement('div');
                     const isToday = item.day === today;
-                    const stressColor = {
+                    const stressColour = {
                         'High': 'bg-red-100 border-red-300',
                         'Very High': 'bg-red-200 border-red-400',
                         'Low': 'bg-green-100 border-green-300',
                         'Rest': 'bg-blue-100 border-blue-300',
                     };
-                    dayCard.className = `p-4 rounded-lg shadow-sm border-l-4 ${stressColor[item.stress]} ${isToday ? 'ring-2 ring-[#795548]' : ''}`;
+                    dayCard.className = `p-4 rounded-lg shadow-sm border-l-4 ${stressColour[item.stress]} ${isToday ? 'ring-2 ring-[#795548]' : ''}`;
                     dayCard.innerHTML = `
                         <p class="font-bold text-lg ${isToday ? 'text-[#4E342E]' : ''}">${item.day}</p>
                         <p class="text-[#795548]">${item.task}</p>
